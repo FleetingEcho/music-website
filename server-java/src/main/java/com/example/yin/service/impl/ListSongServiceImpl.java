@@ -15,30 +15,27 @@ public class ListSongServiceImpl implements ListSongService {
     private ListSongMapper listSongMapper;
 
     @Override
-    public List<ListSong> allListSong()
-    {
+    public List<ListSong> allListSong() {
         return listSongMapper.allListSong();
     }
 
     @Override
     public boolean updateListSongMsg(ListSong listSong) {
-        return listSongMapper.updateListSongMsg(listSong) >0 ?true:false;
+        return listSongMapper.updateListSongMsg(listSong) > 0;
     }
 
     @Override
     public boolean deleteListSong(Integer songId) {
-        return listSongMapper.deleteListSong(songId) >0 ?true:false;
+        return listSongMapper.deleteListSong(songId) > 0;
     }
 
     @Override
-    public boolean addListSong(ListSong listSong)
-    {
-        return listSongMapper.insertSelective(listSong) > 0?true:false;
+    public boolean addListSong(ListSong listSong) {
+        return listSongMapper.insertSelective(listSong) > 0;
     }
 
     @Override
-    public List<ListSong> listSongOfSongId(Integer songListId)
-    {
+    public List<ListSong> listSongOfSongId(Integer songListId) {
         return listSongMapper.listSongOfSongId(songListId);
     }
 

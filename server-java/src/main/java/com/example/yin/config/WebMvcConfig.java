@@ -2,16 +2,14 @@ package com.example.yin.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                // SpringBoot2.4.0 [allowedOriginPatterns]代替[allowedOrigins]
-                .allowedOriginPatterns("*")
-                .allowedMethods("*")
-                .allowCredentials(true);
+        registry.addMapping("/**").allowedOriginPatterns("*")
+                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowCredentials(true).maxAge(3600);
     }
 }

@@ -10,17 +10,7 @@ public interface RankMapper {
 
     int insertSelective(Rank record);
 
-    /**
-     * 查总分
-     * @param songListId
-     * @return
-     */
     int selectScoreSum(Long songListId);
 
-    /**
-     * 查总评分人数
-     * @param songListId
-     * @return
-     */
     int selectRankNum(Long songListId);
 }

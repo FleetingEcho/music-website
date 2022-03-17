@@ -30,40 +30,40 @@ public class ConsumerController {
 
     @EnableWebMvc
     @Configuration
-    public class MyPicConfig implements WebMvcConfigurer {
+    public static class MyPicConfig implements WebMvcConfigurer {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             String os = System.getProperty("os.name");
-            if (os.toLowerCase().startsWith("win")) { // windos系统
-                registry.addResourceHandler("/img/avatorImages/**")
-                        //.addResourceLocations("file:" + Constants.RESOURCE_WIN_PATH + "/img/avatorImages/");
-                        .addResourceLocations("file:" + Constants.RESOURCE_WIN_PATH + "\\img\\avatorImages\\");
-            } else { // MAC、Linux系统
-                registry.addResourceHandler("/img/avatorImages/**")
-                        .addResourceLocations("file:" + Constants.RESOURCE_MAC_PATH + "/img/avatorImages/");
+            if (os.toLowerCase().startsWith("win")) {
+                registry.addResourceHandler("/img/avatarImages/**")
+                        //.addResourceLocations("file:" + Constants.RESOURCE_WIN_PATH + "/img/avatarImages/");
+                        .addResourceLocations("file:" + Constants.RESOURCE_WIN_PATH + "\\img\\avatarImages\\");
+            } else { // MAC、Linux
+                registry.addResourceHandler("/img/avatarImages/**")
+                        .addResourceLocations("file:" + Constants.RESOURCE_MAC_PATH + "/img/avatarImages/");
             }
         }
     }
 
 //    添加用户
     @ResponseBody
-    @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    public Object addUser(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/user/add")
+    public JSONObject addUser(HttpServletRequest req){
+        JSONObject resJson = new JSONObject();
         String username = req.getParameter("username").trim();
         String password = req.getParameter("password").trim();
         String sex = req.getParameter("sex").trim();
-        String phone_num = req.getParameter("phone_num").trim();
+        String phoneNum = req.getParameter("phone_num").trim();
         String email = req.getParameter("email").trim();
         String birth = req.getParameter("birth").trim();
         String introduction = req.getParameter("introduction").trim();
         String location = req.getParameter("location").trim();
-        String avator = req.getParameter("avator").trim();
+        String avatar = req.getParameter("avatar").trim();
 
-        if (username.equals("") || username == null){
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "用户名或密码错误");
-            return jsonObject;
+        if ("".equals(username)){
+            resJson.put("code", 0);
+            resJson.put("msg", "Error in username or password.");
+            return resJson;
         }
         Consumer consumer = new Consumer();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -76,13 +76,13 @@ public class ConsumerController {
         consumer.setUsername(username);
         consumer.setPassword(password);
         consumer.setSex(Byte.valueOf(sex));
-        if (phone_num == "") {
+        if ("".equals(phoneNum)) {
             consumer.setPhoneNum(null);
         } else{
-            consumer.setPhoneNum(phone_num);
+            consumer.setPhoneNum(phoneNum);
         }
 
-        if (email == "") {
+        if ("".equals(email)) {
             consumer.setEmail(null);
         } else{
             consumer.setEmail(email);
@@ -90,59 +90,57 @@ public class ConsumerController {
         consumer.setBirth(myBirth);
         consumer.setIntroduction(introduction);
         consumer.setLocation(location);
-        consumer.setAvator(avator);
+        consumer.setAvatar(avatar);
         consumer.setCreateTime(new Date());
         consumer.setUpdateTime(new Date());
 
         boolean res = consumerService.addUser(consumer);
         if (res) {
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "注册成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully registered.");
         } else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "注册失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to register.");
         }
+        return resJson;
     }
 
-//    判断是否登录成功
+//    判断是否Successfully logged in.
     @ResponseBody
-    @RequestMapping(value = "/user/login/status", method = RequestMethod.POST)
-    public Object loginStatus(@RequestParam(name = "username", defaultValue = "Jake") String username,@RequestParam(name = "password", defaultValue = "123") String password, HttpSession session){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/user/login/status")
+    public JSONObject loginStatus(@RequestParam(name = "username", defaultValue = "Jake") String username,@RequestParam(name = "password", defaultValue = "123") String password, HttpSession session){
+        JSONObject resJson = new JSONObject();
         System.out.println(username);
         System.out.println(password);
-        boolean res = consumerService.veritypasswd(username, password);
+        boolean res = consumerService.verifyPassword(username, password);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "登录成功");
-            jsonObject.put("userMsg", consumerService.loginStatus(username));
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully logged in.");
+            resJson.put("userMsg", consumerService.loginStatus(username));
             session.setAttribute("username", username);
-            return jsonObject;
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "用户名或密码错误");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Error in username or password.");
         }
+        return resJson;
 
-}
+    }
 
 //    返回所有用户
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @GetMapping(value = "/user")
     public Object allUser(){
         return consumerService.allUser();
     }
 
 //    返回指定ID的用户
-    @RequestMapping(value = "/user/detail", method = RequestMethod.GET)
+    @GetMapping(value = "/user/detail")
     public Object userOfId(HttpServletRequest req){
         String id = req.getParameter("id");
         return consumerService.userOfId(Integer.parseInt(id));
     }
 
 //    删除用户
-    @RequestMapping(value = "/user/delete", method = RequestMethod.GET)
+    @GetMapping(value = "/user/delete")
     public Object deleteUser(HttpServletRequest req){
         String id = req.getParameter("id");
         return consumerService.deleteUser(Integer.parseInt(id));
@@ -150,25 +148,23 @@ public class ConsumerController {
 
 //    更新用户信息
     @ResponseBody
-    @RequestMapping(value = "/user/update", method = RequestMethod.POST)
-    public Object updateUserMsg(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/user/update")
+    public JSONObject updateUserMsg(HttpServletRequest req){
+        JSONObject resJson = new JSONObject();
         String id = req.getParameter("id").trim();
         String username = req.getParameter("username").trim();
         String password = req.getParameter("password").trim();
         String sex = req.getParameter("sex").trim();
-        String phone_num = req.getParameter("phone_num").trim();
+        String phoneNum = req.getParameter("phone_num").trim();
         String email = req.getParameter("email").trim();
         String birth = req.getParameter("birth").trim();
         String introduction = req.getParameter("introduction").trim();
         String location = req.getParameter("location").trim();
-        // String avator = req.getParameter("avator").trim();
-        // System.out.println(username+"  "+password+"  "+sex+"   "+phone_num+"     "+email+"      "+birth+"       "+introduction+"      "+location);
 
-        if (username.equals("") || username == null){
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "用户名或密码错误");
-            return jsonObject;
+        if ("".equals(username)){
+            resJson.put("code", 0);
+            resJson.put("msg", "Error in username or password.");
+            return resJson;
         }
         Consumer consumer = new Consumer();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -182,68 +178,64 @@ public class ConsumerController {
         consumer.setUsername(username);
         consumer.setPassword(password);
         consumer.setSex(Byte.valueOf(sex));
-        consumer.setPhoneNum(phone_num);
+        consumer.setPhoneNum(phoneNum);
         consumer.setEmail(email);
         consumer.setBirth(myBirth);
         consumer.setIntroduction(introduction);
         consumer.setLocation(location);
-        // consumer.setAvator(avator);
         consumer.setUpdateTime(new Date());
 
         boolean res = consumerService.updateUserMsg(consumer);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "修改成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully modified!");
+            return resJson;
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "修改失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to modify.");
+            return resJson;
         }
     }
 
 //    更新用户头像
     @ResponseBody
-    @RequestMapping(value = "/user/avatar/update", method = RequestMethod.POST)
-    public Object updateUserPic(@RequestParam("file") MultipartFile avatorFile, @RequestParam("id")int id){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/user/avatar/update")
+    public JSONObject updateUserPic(@RequestParam("file") MultipartFile avatarFile, @RequestParam("id")int id){
+        JSONObject resJson = new JSONObject();
 
-        if (avatorFile.isEmpty()) {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "文件上传失败！");
-            return jsonObject;
+        if (avatarFile.isEmpty()) {
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload this file.！");
+            return resJson;
         }
-        String fileName = System.currentTimeMillis()+avatorFile.getOriginalFilename();
-        String filePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "avatorImages" ;
+        String fileName = System.currentTimeMillis()+avatarFile.getOriginalFilename();
+        String filePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "avatarImages" ;
         File file1 = new File(filePath);
         if (!file1.exists()){
             file1.mkdir();
         }
 
         File dest = new File(filePath + System.getProperty("file.separator") + fileName);
-        String storeAvatorPath = "/img/avatorImages/"+fileName;
+        String storeAvatorPath = "/img/avatarImages/"+fileName;
         try {
-            avatorFile.transferTo(dest);
+            avatarFile.transferTo(dest);
             Consumer consumer = new Consumer();
             consumer.setId(id);
-            consumer.setAvator(storeAvatorPath);
+            consumer.setAvatar(storeAvatorPath);
             boolean res = consumerService.updateUserAvator(consumer);
             if (res){
-                jsonObject.put("code", 1);
-                jsonObject.put("avator", storeAvatorPath);
-                jsonObject.put("msg", "上传成功");
-                return jsonObject;
+                resJson.put("code", 1);
+                resJson.put("avatar", storeAvatorPath);
+                resJson.put("msg", "Successfully uploaded!");
             }else {
-                jsonObject.put("code", 0);
-                jsonObject.put("msg", "上传失败");
-                return jsonObject;
+                resJson.put("code", 0);
+                resJson.put("msg", "Failed to upload.");
             }
         }catch (IOException e){
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "上传失败"+e.getMessage());
-            return jsonObject;
-        }finally {
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload."+e.getMessage());
+            return resJson;
         }
+        return resJson;
     }
 }

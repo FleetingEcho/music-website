@@ -17,24 +17,23 @@ public class CollectController {
     @Autowired
     private CollectServiceImpl collectService;
 
-//    添加收藏的歌曲
     @ResponseBody
     @PostMapping("/add")
-    public Object addCollection(HttpServletRequest req){
+    public JSONObject addCollection(HttpServletRequest req){
 
-        JSONObject jsonObject = new JSONObject();
+        JSONObject resJson = new JSONObject();
         String userId = req.getParameter("userId");
         String type = req.getParameter("type");
         String songId=req.getParameter("songId");
         String song_list_id=req.getParameter("songListId");
         if (Objects.equals(songId, "")){
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "收藏歌曲为空");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Empty collection.");
+            return resJson;
         } else if (collectService.existSongId(Integer.parseInt(userId), Integer.parseInt(songId))) {
-            jsonObject.put("code", 2);
-            jsonObject.put("msg", "已收藏");
-            return jsonObject;
+            resJson.put("code", 2);
+            resJson.put("msg", "Already collected.");
+            return resJson;
         }
         Collect collect = new Collect();
         collect.setUserId(Integer.parseInt(userId));
@@ -47,14 +46,13 @@ public class CollectController {
         collect.setCreateTime(new Date());
         boolean res = collectService.addCollection(collect);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "收藏成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully collected.");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "收藏失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to collect.");
         }
+        return resJson;
     }
 
 //    返回所有用户收藏列表
@@ -80,15 +78,13 @@ public class CollectController {
 
 //    更新收藏
     @ResponseBody
-    //@PostMapping("/update")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public Object updateCollectMsg(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/update")
+    public JSONObject updateCollectMsg(HttpServletRequest req){
+        JSONObject resJson = new JSONObject();
         String id = req.getParameter("id").trim();
         String userId = req.getParameter("userId").trim();
         String type = req.getParameter("type").trim();
         String songId = req.getParameter("songId").trim();
-//        String song_list_id = req.getParameter("songListId").trim();
 
         Collect collect = new Collect();
         collect.setId(Integer.parseInt(id));
@@ -98,14 +94,13 @@ public class CollectController {
 
         boolean res = collectService.updateCollectMsg(collect);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "修改成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "successfully modified!");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "修改失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to modify.");
         }
+        return resJson;
     }
 }
 

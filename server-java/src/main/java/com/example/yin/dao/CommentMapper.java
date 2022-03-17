@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface CommentMapper {
-    int deleteByPrimaryKey(Integer id);
+    //int deleteByPrimaryKey(Integer id);
 
     int insert(Comment record);
 
@@ -15,7 +15,7 @@ public interface CommentMapper {
 
     Comment selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Comment record);
+    //int updateByPrimaryKeySelective(Comment record);
 
     int updateByPrimaryKey(Comment record);
 

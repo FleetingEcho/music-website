@@ -11,6 +11,7 @@
     <result column="pic" property="pic" jdbcType="VARCHAR" />
     <result column="url" property="url" jdbcType="VARCHAR" />
   </resultMap>
+<!--  two result map-->
   <resultMap id="ResultMapWithBLOBs" type="com.example.yin.domain.Song" extends="BaseResultMap" >
     <result column="lyric" property="lyric" jdbcType="LONGVARCHAR" />
   </resultMap>

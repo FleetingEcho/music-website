@@ -17,7 +17,10 @@
     id, title, pic, style
   </sql>
   <sql id="Blob_Column_List" >
-
+/*
+id Blob_Column_List is just for simple reuse.
+ <include refid="Base_Column_List"/>
+*/
     introduction
   </sql>
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >

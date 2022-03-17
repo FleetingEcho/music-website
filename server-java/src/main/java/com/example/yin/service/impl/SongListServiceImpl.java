@@ -16,47 +16,41 @@ public class SongListServiceImpl implements SongListService {
 
     @Override
     public boolean updateSongListMsg(SongList songList) {
-        return songListMapper.updateSongListMsg(songList) >0 ?true:false;
+        return songListMapper.updateSongListMsg(songList) > 0;
     }
 
     @Override
     public boolean deleteSongList(Integer id) {
-        return songListMapper.deleteSongList(id) >0 ?true:false;
+        return songListMapper.deleteSongList(id) > 0;
     }
 
     @Override
-    public List<SongList> allSongList()
-    {
+    public List<SongList> allSongList() {
         return songListMapper.allSongList();
     }
 
     @Override
-    public List<SongList> likeTitle(String title)
-    {
+    public List<SongList> likeTitle(String title) {
         return songListMapper.likeTitle(title);
     }
 
     @Override
-    public List<SongList> likeStyle(String style)
-    {
+    public List<SongList> likeStyle(String style) {
         return songListMapper.likeStyle(style);
     }
 
     @Override
-    public List<SongList> songListOfTitle(String title)
-    {
+    public List<SongList> songListOfTitle(String title) {
         return songListMapper.songListOfTitle(title);
     }
 
     @Override
-    public boolean addSongList(SongList songList)
-    {
-        return songListMapper.insertSelective(songList) > 0?true:false;
+    public boolean addSongList(SongList songList) {
+        return songListMapper.insertSelective(songList) > 0;
     }
 
     @Override
     public boolean updateSongListImg(SongList songList) {
-
-        return songListMapper.updateSongListImg(songList) >0 ?true:false;
+        return songListMapper.updateSongListImg(songList) > 0;
     }
 }

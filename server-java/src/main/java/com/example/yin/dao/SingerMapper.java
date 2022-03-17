@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface SingerMapper {
-    int deleteByPrimaryKey(Integer id);
+    //int deleteByPrimaryKey(Integer id);
 
     int insert(Singer record);
 
@@ -15,7 +15,7 @@ public interface SingerMapper {
 
     Singer selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Singer record);
+    //int updateByPrimaryKeySelective(Singer record);
 
     int updateByPrimaryKey(Singer record);
 

@@ -12,7 +12,7 @@ import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class YinMusicApplicationTests {
+public class MusicApplicationTests {
 
     @Autowired
 //    private SongServiceImpl songService;
@@ -61,7 +61,7 @@ public class YinMusicApplicationTests {
 //        singer.setPic("/img/singerPic/soler.jpg");
 //        singer.setBirth(new Date());
 //        singer.setLocation("西班牙");
-//        singer.setIntroduction("全名是Álvaro Tauchert Soler，是一位新晋西班牙歌手，流行音乐作曲家。出生于1991年，西班牙巴塞罗纳。");
+//        singer.setIntroduction("全名是Álvaro Tauchert Soler，是一位新晋西班牙歌手，流行Music 作曲家。出生于1991年，西班牙巴塞罗纳。");
 //        singerService.addSinger(singer);
 //    }
 //    @Test
@@ -94,13 +94,13 @@ public void consumerTest(){
     Consumer consumer = new Consumer();
     consumer.setUsername("test");
     consumer.setPassword("123");
-    consumer.setSex(new Byte("0"));
+    consumer.setSex(Byte.valueOf("0"));
     consumer.setPhoneNum("15666412237");
     consumer.setEmail("1239679@qq.com");
     consumer.setBirth(new Date());
     consumer.setIntroduction("");
     consumer.setLocation("");
-    consumer.setAvator("/img/avatorImages/user.jpg");
+    consumer.setAvatar("/img/avatarImages/user.jpg");
     consumer.setCreateTime(new Date());
     consumer.setUpdateTime(new Date());
     consumerService.addUser(consumer);

@@ -15,35 +15,31 @@ public class CollectServiceImpl implements CollectService {
 
     @Override
     public boolean addCollection(Collect collect) {
-        return collectMapper.insertSelective(collect) > 0 ? true:false;
+        return collectMapper.insertSelective(collect) > 0;
     }
 
     @Override
     public boolean existSongId(Integer userId, Integer songId) {
-        return collectMapper.existSongId(userId, songId)>0 ? true:false;
+        return collectMapper.existSongId(userId, songId) > 0;
     }
 
     @Override
     public boolean updateCollectMsg(Collect collect) {
-        return collectMapper.updateCollectMsg(collect) >0 ?true:false;
+        return collectMapper.updateCollectMsg(collect) > 0;
     }
 
     @Override
     public boolean deleteCollect(Integer userId, Integer songId) {
-        return collectMapper.deleteCollect(userId, songId) >0 ?true:false;
+        return collectMapper.deleteCollect(userId, songId) > 0;
     }
 
     @Override
-    public List<Collect> allCollect()
-
-    {
+    public List<Collect> allCollect() {
         return collectMapper.allCollect();
     }
 
     @Override
-    public List<Collect> collectionOfUser(Integer userId)
-
-    {
+    public List<Collect> collectionOfUser(Integer userId) {
         return collectMapper.collectionOfUser(userId);
     }
 }

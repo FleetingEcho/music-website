@@ -25,11 +25,11 @@ public class SongListController {
     private SongListServiceImpl songListService;
 
     @Configuration
-    public class MyPicConfig implements WebMvcConfigurer {
+    public static class MyPicConfig implements WebMvcConfigurer {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             String os = System.getProperty("os.name");
-            if (os.toLowerCase().startsWith("win")) { // windos系统
+            if (os.toLowerCase().startsWith("win")) { // windos
                 registry.addResourceHandler("/img/songListPic/**")
                         .addResourceLocations("file:" + Constants.RESOURCE_WIN_PATH + "\\img\\songListPic\\");
             } else { // MAC、Linux系统
@@ -41,9 +41,9 @@ public class SongListController {
 
 //    添加歌单
     @ResponseBody
-    @RequestMapping(value = "/songList/add", method = RequestMethod.POST)
+    @PostMapping(value = "/songList/add")
     public Object addSongList(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+        JSONObject resJson = new JSONObject();
         String title = req.getParameter("title").trim();
         String pic = req.getParameter("pic").trim();
         String introduction = req.getParameter("introduction").trim();
@@ -57,45 +57,44 @@ public class SongListController {
 
         boolean res = songListService.addSongList(songList);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "添加成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully added.");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "添加失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to add.");
         }
+        return resJson;
     }
 
 //    返回所有歌单
-    @RequestMapping(value = "/songList", method = RequestMethod.GET)
+    @GetMapping(value = "/songList")
     public Object allSongList(){
         return songListService.allSongList();
     }
 
 //    返回指定标题对应的歌单
-    @RequestMapping(value = "/songList/title/detail", method = RequestMethod.GET)
+    @GetMapping(value = "/songList/title/detail")
     public Object songListOfTitle(HttpServletRequest req){
         String title = req.getParameter("title").trim();
         return songListService.songListOfTitle(title);
     }
 
 //    返回标题包含文字的歌单
-    @RequestMapping(value = "/songList/likeTitle/detail", method = RequestMethod.GET)
+    @GetMapping(value = "/songList/likeTitle/detail")
     public Object songListOfLikeTitle(HttpServletRequest req){
         String title = req.getParameter("title").trim();
         return songListService.likeTitle('%'+ title + '%');
     }
 
 //    返回指定类型的歌单
-    @RequestMapping(value = "/songList/style/detail", method = RequestMethod.GET)
+    @GetMapping(value = "/songList/style/detail")
     public Object songListOfStyle(HttpServletRequest req){
         String style = req.getParameter("style").trim();
         return songListService.likeStyle('%'+ style + '%');
     }
 
 //    删除歌单
-    @RequestMapping(value = "/songList/delete", method = RequestMethod.GET)
+    @GetMapping(value = "/songList/delete")
     public Object deleteSongList(HttpServletRequest req){
         String id = req.getParameter("id");
         return songListService.deleteSongList(Integer.parseInt(id));
@@ -103,9 +102,9 @@ public class SongListController {
 
 //    更新歌单信息
     @ResponseBody
-    @RequestMapping(value = "/songList/update", method = RequestMethod.POST)
+    @PostMapping(value = "/songList/update")
     public Object updateSongListMsg(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+        JSONObject resJson = new JSONObject();
         String id = req.getParameter("id").trim();
         String title = req.getParameter("title").trim();
         String pic = req.getParameter("pic").trim();
@@ -121,28 +120,27 @@ public class SongListController {
 
         boolean res = songListService.updateSongListMsg(songList);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "修改成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "successfully modified!");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "修改失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to modify.");
         }
+        return resJson;
     }
 
 //    更新歌单图片
     @ResponseBody
-    @RequestMapping(value = "/songList/img/update", method = RequestMethod.POST)
-    public Object updateSongListPic(@RequestParam("file") MultipartFile avatorFile, @RequestParam("id")int id){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/songList/img/update")
+    public Object updateSongListPic(@RequestParam("file") MultipartFile avatarFile, @RequestParam("id")int id){
+        JSONObject resJson = new JSONObject();
 
-        if (avatorFile.isEmpty()) {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "文件上传失败！");
-            return jsonObject;
+        if (avatarFile.isEmpty()) {
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload this file.！");
+            return resJson;
         }
-        String fileName = System.currentTimeMillis()+avatorFile.getOriginalFilename();
+        String fileName = System.currentTimeMillis()+avatarFile.getOriginalFilename();
         String filePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "songListPic" ;
         File file1 = new File(filePath);
         if (!file1.exists()){
@@ -152,28 +150,29 @@ public class SongListController {
         File dest = new File(filePath + System.getProperty("file.separator") + fileName);
         String storeAvatorPath = "/img/songListPic/"+fileName;
         try {
-            avatorFile.transferTo(dest);
+            avatarFile.transferTo(dest);
             SongList songList = new SongList();
             songList.setId(id);
             songList.setPic(storeAvatorPath);
             boolean res = songListService.updateSongListImg(songList);
-            if (res){
-                jsonObject.put("code", 1);
-                jsonObject.put("avator", storeAvatorPath);
-                jsonObject.put("msg", "上传成功");
-                return jsonObject;
-            }else {
-                jsonObject.put("code", 0);
-                jsonObject.put("msg", "上传失败");
-                return jsonObject;
-            }
+            return getObject(resJson, storeAvatorPath, res);
         }catch (IOException e){
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "上传失败" + e.getMessage());
-            return jsonObject;
-        }finally {
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload." + e.getMessage());
+            return resJson;
         }
+    }
+
+    static Object getObject(JSONObject resJson, String storeAvatorPath, boolean res) {
+        if (res){
+            resJson.put("code", 1);
+            resJson.put("avatar", storeAvatorPath);
+            resJson.put("msg", "Successfully uploaded.");
+        }else {
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload.");
+        }
+        return resJson;
     }
 }
 

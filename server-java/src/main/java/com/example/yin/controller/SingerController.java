@@ -27,7 +27,7 @@ public class SingerController {
     private SingerServiceImpl singerService;
 
     @Configuration
-    public class MyPicConfig implements WebMvcConfigurer {
+    public static class MyPicConfig implements WebMvcConfigurer {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             String os = System.getProperty("os.name");
@@ -43,9 +43,9 @@ public class SingerController {
 
 //    添加歌手
     @ResponseBody
-    @RequestMapping(value = "/singer/add", method = RequestMethod.POST)
-    public Object addSinger(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/singer/add")
+    public JSONObject addSinger(HttpServletRequest req){
+        JSONObject resJson = new JSONObject();
         String name = req.getParameter("name").trim();
         String sex = req.getParameter("sex").trim();
         String pic = req.getParameter("pic").trim();
@@ -70,38 +70,37 @@ public class SingerController {
 
         boolean res = singerService.addSinger(singer);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "添加成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully added.");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "添加失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to add.");
         }
+        return resJson;
     }
 
 //    返回所有歌手
-    @RequestMapping(value = "/singer", method = RequestMethod.GET)
+    @GetMapping(value = "/singer")
     public Object allSinger(){
         return singerService.allSinger();
     }
 
 //    根据歌手名查找歌手
-    @RequestMapping(value = "/singer/name/detail", method = RequestMethod.GET)
+    @GetMapping(value = "/singer/name/detail")
     public Object singerOfName(HttpServletRequest req){
         String name = req.getParameter("name").trim();
         return singerService.singerOfName(name);
     }
 
 //    根据歌手性别查找歌手
-    @RequestMapping(value = "/singer/sex/detail", method = RequestMethod.GET)
+    @GetMapping(value = "/singer/sex/detail")
     public Object singerOfSex(HttpServletRequest req){
         String sex = req.getParameter("sex").trim();
         return singerService.singerOfSex(Integer.parseInt(sex));
     }
 
 //    删除歌手
-    @RequestMapping(value = "/singer/delete", method = RequestMethod.GET)
+    @GetMapping(value = "/singer/delete")
     public Object deleteSinger(HttpServletRequest req){
         String id = req.getParameter("id");
         return singerService.deleteSinger(Integer.parseInt(id));
@@ -109,9 +108,9 @@ public class SingerController {
 
 //    更新歌手信息
     @ResponseBody
-    @RequestMapping(value = "/singer/update", method = RequestMethod.POST)
-    public Object updateSingerMsg(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/singer/update")
+    public JSONObject updateSingerMsg(HttpServletRequest req){
+        JSONObject resJson = new JSONObject();
         String id = req.getParameter("id").trim();
         String name = req.getParameter("name").trim();
         String sex = req.getParameter("sex").trim();
@@ -138,28 +137,27 @@ public class SingerController {
 
         boolean res = singerService.updateSingerMsg(singer);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "修改成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "successfully modified!");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "修改失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to modify.");
         }
+        return resJson;
     }
 
 //    更新歌手头像
     @ResponseBody
-    @RequestMapping(value = "/singer/avatar/update", method = RequestMethod.POST)
-    public Object updateSingerPic(@RequestParam("file") MultipartFile avatorFile, @RequestParam("id")int id){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping(value = "/singer/avatar/update")
+    public JSONObject updateSingerPic(@RequestParam("file") MultipartFile avatarFile, @RequestParam("id")int id){
+        JSONObject resJson = new JSONObject();
 
-        if (avatorFile.isEmpty()) {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "文件上传失败！");
-            return jsonObject;
+        if (avatarFile.isEmpty()) {
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload this file.！");
+            return resJson;
         }
-        String fileName = System.currentTimeMillis()+avatorFile.getOriginalFilename();
+        String fileName = System.currentTimeMillis()+avatarFile.getOriginalFilename();
         String filePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "singerPic" ;
         File file1 = new File(filePath);
         if (!file1.exists()){
@@ -169,27 +167,24 @@ public class SingerController {
         File dest = new File(filePath + System.getProperty("file.separator") + fileName);
         String storeAvatorPath = "/img/singerPic/"+fileName;
         try {
-            avatorFile.transferTo(dest);
+            avatarFile.transferTo(dest);
             Singer singer = new Singer();
             singer.setId(id);
             singer.setPic(storeAvatorPath);
             boolean res = singerService.updateSingerPic(singer);
             if (res){
-                jsonObject.put("code", 1);
-                jsonObject.put("pic", storeAvatorPath);
-                jsonObject.put("msg", "上传成功");
-                return jsonObject;
+                resJson.put("code", 1);
+                resJson.put("pic", storeAvatorPath);
+                resJson.put("msg", "Successfully uploaded.");
             }else {
-                jsonObject.put("code", 0);
-                jsonObject.put("msg", "上传失败");
-                return jsonObject;
+                resJson.put("code", 0);
+                resJson.put("msg", "Failed to upload.");
             }
+            return resJson;
         }catch (IOException e){
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "上传失败" + e.getMessage());
-            return jsonObject;
-        }finally {
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to upload." + e.getMessage());
+            return resJson;
         }
     }
 }

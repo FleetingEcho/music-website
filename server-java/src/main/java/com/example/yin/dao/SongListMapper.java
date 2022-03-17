@@ -8,15 +8,12 @@ import java.util.List;
 @Repository
 
 public interface SongListMapper {
-    int deleteByPrimaryKey(Integer id);
 
     int insert(SongList record);
 
     int insertSelective(SongList record);
 
     SongList selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(SongList record);
 
     int updateByPrimaryKeyWithBLOBs(SongList record);
 

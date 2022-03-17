@@ -5,10 +5,7 @@ import com.example.yin.domain.Rank;
 import com.example.yin.service.impl.RankServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,9 +18,9 @@ public class RankController {
 
 //    提交评分
     @ResponseBody
-    @RequestMapping(value = "/rank/add", method = RequestMethod.POST)
-    public Object addRank(HttpServletRequest req){
-        JSONObject jsonObject = new JSONObject();
+    @PostMapping( "/rank/add")
+    public JSONObject addRank(HttpServletRequest req){
+        JSONObject resJson = new JSONObject();
         String songListId = req.getParameter("songListId").trim();
         String consumerId = req.getParameter("consumerId").trim();
         String score = req.getParameter("score").trim();
@@ -35,18 +32,17 @@ public class RankController {
 
         boolean res = rankService.addRank(rank);
         if (res){
-            jsonObject.put("code", 1);
-            jsonObject.put("msg", "评价成功");
-            return jsonObject;
+            resJson.put("code", 1);
+            resJson.put("msg", "Successfully rated.");
         }else {
-            jsonObject.put("code", 0);
-            jsonObject.put("msg", "评价失败");
-            return jsonObject;
+            resJson.put("code", 0);
+            resJson.put("msg", "Failed to rate.");
         }
+        return resJson;
     }
 
 //    获取指定歌单的评分
-    @RequestMapping(value = "/rank", method = RequestMethod.GET)
+    @GetMapping( "/rank")
     public Object rankOfSongListId(HttpServletRequest req){
         String songListId = req.getParameter("songListId");
         return rankService.rankOfSongListId(Long.parseLong(songListId));
